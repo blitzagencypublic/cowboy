@@ -7,19 +7,20 @@ $(function(){
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
-	/*
-	FWA.socket = io.connect('http://localhost:7331');
-	socket.on('connect', function() 
-	{
-		console.log("connected!");
-	});
-	*/
+	
 
 	var dots = [];
 	var lastDotId = 0;
 
-	function init() {
+	function init() 
+	{
 		$(cvs).click(addDot);
+		
+		FWA.socket = io.connect('http://cowboy:7331/arduino');
+		FWA.socket.on('connect', function() 
+		{
+			console.log("connected!");
+		});
 
 		setInterval(draw, 33);
 	}
@@ -93,6 +94,7 @@ $(function(){
 	}
 
 	function sendInfo(x, y) {
+		FWA.socket.
 		// send info to node
 	}
 
