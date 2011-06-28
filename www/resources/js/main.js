@@ -13,6 +13,12 @@ $(function(){
 	var lastDotId = 0;
 
 	function init() {
+		FWA.socket = io.connect('http://cowboy:7331/arduino');
+		FWA.socket.on('connect', function() 
+		{
+			console.log("connected!");
+		});
+				
 		$(cvs).click(onCanvasClick);
 		setInterval(draw, 33);
 	}
