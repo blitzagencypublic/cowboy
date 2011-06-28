@@ -42,6 +42,7 @@ $(function(){
 		sendInfo(localX, localY)
 	}
 
+	// bug when dot is removed while loop in draw is executing, removing for now.
 	function removeDot(id) {
 		// log('removeDot' + id);
 		// log(dots);
@@ -50,19 +51,18 @@ $(function(){
 
 	function create_dot(id, x, y, onDeath) {
 		var radius = 0;
-		var rMax = 60 + Math.floor(Math.random()*50);
-		var rSpeed = 1;
+		var rMax = Math.floor(Math.random()*70) + 30;
+		var rSpeed = 2;
 		var alive = true;
 		var alpha = 1;
-		var aSpeed = 1/rMax;
-
+		var aSpeed = 1/ (rMax/rSpeed);
 		var color = FWA.randomRGB(140, 115, 0.2);
 
 		function draw() {
 			if(alive) {
-				var fill = "rgba(" + ""+color.r + ","+color.g + ","+color.b + ",1" + ")";
+				var fill = "rgba(" + ""+color.r + ","+color.g + ","+color.b + ","+alpha + ")";
 
-				FWA.drawCircle(ctx, {x:x, y:y, radius:radius, fill:fill, alpha:alpha});
+				FWA.drawCircle(ctx, {x:x, y:y, radius:radius, fill:fill});
 				if(radius < rMax) {
 					radius += rSpeed;
 					alpha  -= aSpeed;
