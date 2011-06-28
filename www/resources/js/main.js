@@ -7,12 +7,13 @@ $(function(){
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
-	
+	/*
 	FWA.socket = io.connect('http://localhost:7331');
 	socket.on('connect', function() 
 	{
 		console.log("connected!");
 	});
+	*/
 
 	var dots = [];
 	var lastDotId = 0;
