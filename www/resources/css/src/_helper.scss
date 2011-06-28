@@ -1,0 +1,15 @@
+/* _helper.scss */
+.ir { display:block; text-indent:-999em; overflow:hidden; background-repeat: no-repeat; }
+.hidden { display:none; visibility:hidden; }
+.visuallyhidden { position:absolute !important;  
+	  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+	  clip: rect(1px, 1px, 1px, 1px); }
+.collapsed { display:none; }
+.invisible { visibility: hidden; }
+.clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.clearfix { display: inline-block; }
+* html .clearfix { height: 1%; } /* Hides from IE-mac \*/
+.clearfix { display: block; }
+.button {cursor:pointer;}
+.button.disabled,
+.button.selected {cursor:default;}
