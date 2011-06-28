@@ -10,13 +10,26 @@ $(function(){
 	var lastDotId = 0;
 
 	function init() {
-		$(cvs).click(addDot);
+		$(cvs).click(onCanvasClick);
 
 		setInterval(draw, 33);
 	}
 
+	function onCanvasClick(e) {
+		var target = $(e.target);
+		var offset   = target.offset();
+		var left     = offset.left;
+		var top      = offset.top;
+		var mouseX   = e.pageX;
+		var mouseY   = e.pageY;
+		var localX   = mouseX - left;
+		var localY   = mouseY - top;
+
+		addDot(localX, localY)
+	}
+
 	function draw() {
-		ctx.globalCompositeOperation = 'destination-over';
+		ctx.globalCompositeOperation = 'lighter';
 		ctx.clearRect(0 , 0, cvs_width, cvs_height);
 
 		var len = dots.length;
@@ -26,20 +39,11 @@ $(function(){
 		}
 	}
 	
-	function addDot(e) {
-		var target = $(e.target);
-		var offset   = target.offset();
-		var left     = offset.left;
-		var top      = offset.top;
-		var mouseX   = e.pageX;
-		var mouseY   = e.pageY;
-		var localX   = mouseX - left;
-		var localY   = mouseY - top;
-		
-		dots.push(create_dot(lastDotId, localX, localY, removeDot));
+	function addDot(x, y) {
+		dots.push(create_dot(lastDotId, x, y, removeDot));
 		lastDotId ++;
 
-		sendInfo(localX, localY)
+		sendInfo(x, y)
 	}
 
 	// bug when dot is removed while loop in draw is executing, removing for now.
@@ -51,7 +55,7 @@ $(function(){
 
 	function create_dot(id, x, y, onDeath) {
 		var radius = 0;
-		var rMax = Math.floor(Math.random()*70) + 30;
+		var rMax = Math.floor(Math.random()*135) + 50;
 		var rSpeed = 2;
 		var alive = true;
 		var alpha = 1;
