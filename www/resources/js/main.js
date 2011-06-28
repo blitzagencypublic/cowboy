@@ -22,6 +22,8 @@ $(function(){
 		$(cvs).click(onCanvasClick);
 
 		setInterval(draw, 33);
+
+		receiveInfo({x:300, y:300});
 	}
 
 	function onCanvasClick(e) {
@@ -103,6 +105,8 @@ $(function(){
 	function receiveInfo(response) {
 		var x = response.x;
 		var y = response.y;
+
+		addDot(x,y);
 	}
 
 	// start app
