@@ -1,7 +1,7 @@
 #include <MIDI.h>
 
 unsigned int incomingByte = 0;
-const int ledPin = 13;
+const int ledPin = 10;
 const int lowCMIDI = 36;
 
 const int pentatonic[21] = {
@@ -14,7 +14,7 @@ unsigned long allShutoffs[4] = {
   0,0,0,0};
 
 int currentLEDMode = HIGH;
-
+int displayState = 0;
 
 void setup()
 {
@@ -49,42 +49,57 @@ void loop()
     checkTheNoteBuffer(newnote, newLength);
 
   }
-  
+  /*else
+  {
+    if (displayState == 1) {
+      displayState = 0 ;
+      for (int i = 0; i < 4; i++ )
+      {
+        Serial.println("Note :" + allNotes[i] );
+        Serial.println("Shutoff :" + allShutoffs[i] );
+      } 
+    }
+  }
+  */
 }
 void checkTheNoteBuffer( int note, int length)
+{
+  //prep the current time variable
+  unsigned long currentMillis;
+
+
+
+  // loop through my four note buffer
+  int i;
+  for (i = 0; i < 4; i++)
   {
-    //prep the current time variable
-    unsigned long currentMillis;
+    // get the current time
+    currentMillis = millis();
 
-    // loop through my four note buffer
-    int i;
-    for (i = 0; i < 4; i++)
+    // if the current time is greater than the notes shutoff time, we can use the next note.
+    if ( currentMillis > allShutoffs[i])
     {
-      // get the current time
-      currentMillis = millis();
+      // turn off the old note
+      MIDI.sendNoteOff(allNotes[i],0,1); 
+      // set the value in the note buffer
+      allNotes[i] = note;
+      // turn the note on.
+      MIDI.sendNoteOn(note, 127, 1) ;
+      //save it's shutoff time
+      allShutoffs[i] = (millis() + long(length));
 
-      // if the current time is greater than the notes shutoff time, we can use the next note.
-      if ( currentMillis > allShutoffs[i])
+      // if we're cycling note one, change the led value
+      if (i == 0)
       {
-        // turn off the old note
-        MIDI.sendNoteOff(allNotes[i],0,1); 
-        // set the value in the note buffer
-        allNotes[i] = note;
-        // turn the note on.
-        MIDI.sendNoteOn(note, 127, 1) ;
-        //save it's shutoff time
-        allShutoffs[i] = (millis() + long(length));
-
-        // if we're cycling note one, change the led value
-        if (i == 0)
-        {
-          if (currentLEDMode == HIGH) currentLEDMode = LOW;
-          if (currentLEDMode == LOW) currentLEDMode = HIGH;
-        }
+        if (currentLEDMode == HIGH) currentLEDMode = LOW;
+        if (currentLEDMode == LOW) currentLEDMode = HIGH;
       }
+      displayState = 1;
     }
-
   }
+
+}
+
 
 
 
