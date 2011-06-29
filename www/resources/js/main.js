@@ -7,21 +7,22 @@ $(function(){
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
-	/*
-	FWA.socket = io.connect('http://localhost:7331');
-	socket.on('connect', function() 
-	{
-		console.log("connected!");
-	});
-	*/
+	
 
 	var dots = [];
 	var lastDotId = 0;
 
 	function init() {
+		FWA.socket = io.connect('http://cowboy:7331');
+		FWA.socket.on('connect', function() 
+		{
+			console.log("connected!");
+		});
+		
 		$(cvs).click(onCanvasClick);
 		setInterval(draw, 33);
 	}
+	
 	function onCanvasClick(e) {
 		var target = $(e.target);
 		var offset   = target.offset();
@@ -34,6 +35,7 @@ $(function(){
 
 		addDot(localX, localY)
 	}
+	
 	function draw() {
 		ctx.globalCompositeOperation = 'lighter';
 		ctx.clearRect(0 , 0, cvs_width, cvs_height);
@@ -92,7 +94,8 @@ $(function(){
 		return {id:id, draw:draw};
 	}
 	function sendInfo(x, y) {
-		// send info to node
+		
+		FWA.socket.emit('action', { "x": x, "y": y });
 	}
 	function receiveInfo(response) {
 		var x = response.x;
