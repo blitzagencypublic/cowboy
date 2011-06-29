@@ -39,6 +39,7 @@ $(function(){
 		var localY   = mouseY - top;
 
 		addDot(localX, localY)
+		sendInfo(localX, localY)
 	}
 	function draw() {
 		ctx.globalCompositeOperation = 'lighter';
@@ -57,8 +58,6 @@ $(function(){
 	function addDot(x, y) {
 		dots.push(create_dot(lastDotId, x, y, removeDot));
 		lastDotId ++;
-
-		sendInfo(x, y)
 	}
 	
 	function removeDot(id) {

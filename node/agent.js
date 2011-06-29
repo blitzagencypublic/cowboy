@@ -10,13 +10,12 @@ function Agent(socket)
 	var list      = null;
 	var loops     = 0;
 	
-	console.log("Starting: " + startTime);
 	setInterval(function()
 	{
 		startTime = Date.now();
 		loops = loops + 1;
 		queuePlayback();
-		console.log("Starting: " + startTime);
+		
 		
 	}, trackLength);
 	
@@ -28,19 +27,31 @@ function Agent(socket)
 	function queuePlayback()
 	{
 		var current = list;
+		
 		while(1)
 		{
-			if(current.next == null) break;
+			console.log(current.time);
 			
-			setTimeout(function()
+			(function(item) 
 			{
-				sendToBrowser(current);
+				setTimeout(function(){
+					sendToBrowser(item);
+				}, item.time);
 				
-			}, current.time);
+			}(current));
 			
-			current = current.next;
+			if(current.next == null) 
+			{
+				break;
+			}
+			else
+			{
+				current = current.next;
+				//console.log(current.next);
+			}
 		}
 	}
+	
 	
 	function onAction(data)
 	{
@@ -48,15 +59,17 @@ function Agent(socket)
 		var time   = (now - startTime);
 		var object = { "x": data.x, "y":data.y, "next":null, "previous":null, "time": time }
 		
+		/* TODO:
+		send to Arduino
+		*/
+		
 		if(list == null)
 		{
 			list = object;
-			console.log("first object");
 		}
 		else
 		{
 			var current = list;
-			console.log("inserting new touch");
 			if(current.next == null)
 			{
 				current.next    = object;
@@ -70,9 +83,6 @@ function Agent(socket)
 				
 					if(object.time < current.time)
 					{
-						var previous = current.previous;
-						var next     = current.next;
-					
 						if(current.previous == null) // first item in the list
 						{
 							object.next      = current;
@@ -81,11 +91,11 @@ function Agent(socket)
 						}
 						else
 						{
-							object.previous  = current.previous;
-							object.next      = current;
-							current.previous = object;
+							object.previous       = current.previous;
+							object.next           = current;
+							current.previous.next = object;
+							current.previous      = object;
 						}
-						
 						break;
 					}
 					else
@@ -110,21 +120,6 @@ function Agent(socket)
 	{
 		socket.emit("data", {"x":item.x, "y":item.y });
 	}
-	
-	/*
-	setInterval(function()
-	{
-		
-	}, 2000);
-	*/
-	
 }; 
 
-/*
-Agent.prototype.onAction = function(data)
-{
-	
-	//console.log("hello world");
-}
-*/
 module.exports = Agent;
