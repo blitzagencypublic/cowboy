@@ -53,15 +53,18 @@ $(function(){
 			dots.shift();
 		}
 	}
+	
 	function addDot(x, y) {
 		dots.push(create_dot(lastDotId, x, y, removeDot));
 		lastDotId ++;
 
 		sendInfo(x, y)
 	}
+	
 	function removeDot(id) {
 		dots.splice(id, 1);
 	}
+	
 	function create_dot(id, x, y, onDeath) {
 		var radius = 0;
 		var rMax = Math.floor(Math.random()*100) + 50;
@@ -97,10 +100,12 @@ $(function(){
 
 		return {id:id, draw:draw};
 	}
+	
 	function sendInfo(x, y) {
 		
 		FWA.socket.emit('action', { "x": x, "y": y });
 	}
+	
 	function receiveInfo(response) {
 		var x = response.x;
 		var y = response.y;
