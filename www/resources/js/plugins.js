@@ -11,11 +11,13 @@ var FWA = FWA || {};
 
 /*
  * FWA.drawCircle(ctx, props)
+ * 
+ * description: draws a circle on a canvas
  * param: ctx - a context of a canvas object
  * param: props - a generic object populated with properties needed to draw a circle
  * 	ex: {x:5, y:5, radius:10, fill:"#FF0000", stroke:"#000"}
  *  note: x, y, radius are required.
- *  note
+ *
  */
 FWA.drawCircle = function(ctx, props){
 	// optional props
@@ -37,7 +39,13 @@ FWA.drawCircle = function(ctx, props){
 
 /*
  * FWA.randomColor
- * Inspiration: http://www.krazydad.com/makecolors.php
+ *
+ * description: returns a random color from a range
+ * param: center - where the sin wave is located 
+ * param: width - the length of the sin wave
+ * param: freq - the frequency of the sin wave
+ * inspiration: http://www.krazydad.com/makecolors.php
+ *
  */
 FWA.randomRGB = function(center, width, freq) {
 	var i = Math.floor(Math.random() * 32);
