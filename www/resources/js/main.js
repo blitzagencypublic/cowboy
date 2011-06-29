@@ -36,6 +36,7 @@ $(function(){
 		var localY   = mouseY - top;
 
 		addDot(localX, localY)
+		sendInfo(localX, localY)
 	}
 	function draw() {
 		ctx.globalCompositeOperation = 'lighter';
@@ -50,14 +51,15 @@ $(function(){
 			dots.shift();
 		}
 	}
+	
 	function addDot(x, y) {
 		dots.push(create_dot(x, y, removeDot));
-		sendInfo(x, y)
 	}
+	
 	function removeDot(id) {
 		dots.splice(id, 1);
 	}
-	function create_dot(x, y, onDeath) {
+	
 		var radius = 0;
 		var rMax = Math.floor(Math.random()*100) + 50;
 		var rSpeed = 2;
@@ -90,10 +92,12 @@ $(function(){
 		// return public members
 		return {draw:draw};
 	}
+	
 	function sendInfo(x, y) {
 		
 		FWA.socket.emit('action', { "x": x, "y": y });
 	}
+	
 	function receiveInfo(response) {
 		var x = response.x;
 		var y = response.y;
