@@ -13,10 +13,16 @@ $(function(){
 	var lastDotId = 0;
 
 	function init() {
+		
 		FWA.socket = io.connect('http://cowboy:7331');
 		FWA.socket.on('connect', function() 
 		{
 			console.log("connected!");
+		});
+		
+		FWA.socket.on('data', function(data) 
+		{
+			addDot(data.x, data.y)
 		});
 		
 		$(cvs).click(onCanvasClick);
