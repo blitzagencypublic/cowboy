@@ -13,8 +13,9 @@ var FWA = FWA || {};
  * FWA.drawCircle(ctx, props)
  * param: ctx - a context of a canvas object
  * param: props - a generic object populated with properties needed to draw a circle
- * 	ex: {x:5, y:5, radius:10, fill:"#FF0000", stroke:"#000", alpha:.5}
+ * 	ex: {x:5, y:5, radius:10, fill:"#FF0000", stroke:"#000"}
  *  note: x, y, radius are required.
+ *  note
  */
 FWA.drawCircle = function(ctx, props){
 	// optional props
@@ -24,7 +25,6 @@ FWA.drawCircle = function(ctx, props){
 
 	if(fill) ctx.fillStyle = fill;
 	if(stroke) ctx.stroke = stroke;
-	if(alpha) ctx.globalAlpha = alpha;
 	
 	ctx.arc(props.x, props.y, props.radius, 0, Math.PI*2, true);
 	

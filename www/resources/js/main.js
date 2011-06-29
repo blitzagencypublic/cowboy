@@ -1,32 +1,29 @@
 var FWA = FWA || {};
+FWA.socket = null;
 
 $(function(){
+	
 	var cvs = $("#main-canvas")[0];
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
+	
 
 	var dots = [];
 	var lastDotId = 0;
 
 	function init() {
-		$(cvs).click(addDot);
-
+		FWA.socket = io.connect('http://cowboy:7331');
+		FWA.socket.on('connect', function() 
+		{
+			console.log("connected!");
+		});
+		
+		$(cvs).click(onCanvasClick);
 		setInterval(draw, 33);
 	}
-
-	function draw() {
-		ctx.globalCompositeOperation = 'destination-over';
-		ctx.clearRect(0 , 0, cvs_width, cvs_height);
-
-		var len = dots.length;
-
-		for(var i=0; i < len; i++) {
-			dots[i].draw();
-		}
-	}
 	
-	function addDot(e) {
+	function onCanvasClick(e) {
 		var target = $(e.target);
 		var offset   = target.offset();
 		var left     = offset.left;
@@ -35,34 +32,46 @@ $(function(){
 		var mouseY   = e.pageY;
 		var localX   = mouseX - left;
 		var localY   = mouseY - top;
-		
-		dots.push(create_dot(lastDotId, localX, localY, removeDot));
+
+		addDot(localX, localY)
+	}
+	
+	function draw() {
+		ctx.globalCompositeOperation = 'lighter';
+		ctx.clearRect(0 , 0, cvs_width, cvs_height);
+
+		var len = dots.length;
+		for(var i=0; i < len; i++) {
+			var dot = dots[i];
+			dot.draw();
+		}
+		while(dots.length > 100) {
+			dots.shift();
+		}
+	}
+	function addDot(x, y) {
+		dots.push(create_dot(lastDotId, x, y, removeDot));
 		lastDotId ++;
 
-		sendInfo(localX, localY)
+		sendInfo(x, y)
 	}
-
 	function removeDot(id) {
-		// log('removeDot' + id);
-		// log(dots);
-		// dots.splice(id, 1);
+		dots.splice(id, 1);
 	}
-
 	function create_dot(id, x, y, onDeath) {
 		var radius = 0;
-		var rMax = 60 + Math.floor(Math.random()*50);
-		var rSpeed = 1;
+		var rMax = Math.floor(Math.random()*100) + 50;
+		var rSpeed = 2;
 		var alive = true;
 		var alpha = 1;
-		var aSpeed = 1/rMax;
-
+		var aSpeed = 1/ (rMax/rSpeed);
 		var color = FWA.randomRGB(140, 115, 0.2);
 
 		function draw() {
 			if(alive) {
-				var fill = "rgba(" + ""+color.r + ","+color.g + ","+color.b + ",1" + ")";
+				var fill = "rgba(" + ""+color.r + ","+color.g + ","+color.b + ","+alpha + ")";
 
-				FWA.drawCircle(ctx, {x:x, y:y, radius:radius, fill:fill, alpha:alpha});
+				FWA.drawCircle(ctx, {x:x, y:y, radius:radius, fill:fill});
 				if(radius < rMax) {
 					radius += rSpeed;
 					alpha  -= aSpeed;
@@ -71,27 +80,29 @@ $(function(){
 				return;
 			}
 
-			if(radius == rMax){
+			if(radius >= rMax){
 				kill();
 			}
 		}
 		function kill() {
 			alive = false;
-			if(onDeath)onDeath(id);
+		}
+		function get_alive(){
+			return alive;
 		}
 
-		return {draw:draw};
+		return {id:id, draw:draw};
 	}
-
 	function sendInfo(x, y) {
-		// send info to node
+		
+		FWA.socket.emit('action', { "x": x, "y": y });
 	}
-
 	function receiveInfo(response) {
 		var x = response.x;
 		var y = response.y;
-	}
 
+		addDot(x,y);
+	}
 	// start app
 	init();
 });
