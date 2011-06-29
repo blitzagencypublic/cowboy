@@ -22,7 +22,6 @@ $(function(){
 		$(cvs).click(onCanvasClick);
 		setInterval(draw, 33);
 	}
-	
 	function onCanvasClick(e) {
 		var target = $(e.target);
 		var offset   = target.offset();
@@ -35,7 +34,6 @@ $(function(){
 
 		addDot(localX, localY)
 	}
-	
 	function draw() {
 		ctx.globalCompositeOperation = 'lighter';
 		ctx.clearRect(0 , 0, cvs_width, cvs_height);
