@@ -7,10 +7,7 @@ $(function(){
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
-	
-
 	var dots = [];
-	var lastDotId = 0;
 
 	function init() {
 		
@@ -54,15 +51,13 @@ $(function(){
 		}
 	}
 	function addDot(x, y) {
-		dots.push(create_dot(lastDotId, x, y, removeDot));
-		lastDotId ++;
-
+		dots.push(create_dot(x, y, removeDot));
 		sendInfo(x, y)
 	}
 	function removeDot(id) {
 		dots.splice(id, 1);
 	}
-	function create_dot(id, x, y, onDeath) {
+	function create_dot(x, y, onDeath) {
 		var radius = 0;
 		var rMax = Math.floor(Math.random()*100) + 50;
 		var rSpeed = 2;
@@ -91,11 +86,9 @@ $(function(){
 		function kill() {
 			alive = false;
 		}
-		function get_alive(){
-			return alive;
-		}
-
-		return {id:id, draw:draw};
+		
+		// return public members
+		return {draw:draw};
 	}
 	function sendInfo(x, y) {
 		
