@@ -13,16 +13,21 @@ $(function(){
 	var lastDotId = 0;
 
 	function init() {
+		
 		FWA.socket = io.connect('http://cowboy:7331');
 		FWA.socket.on('connect', function() 
 		{
 			console.log("connected!");
 		});
 		
+		FWA.socket.on('data', function(data) 
+		{
+			addDot(data.x, data.y)
+		});
+		
 		$(cvs).click(onCanvasClick);
 		setInterval(draw, 33);
 	}
-	
 	function onCanvasClick(e) {
 		var target = $(e.target);
 		var offset   = target.offset();
@@ -35,7 +40,6 @@ $(function(){
 
 		addDot(localX, localY)
 	}
-	
 	function draw() {
 		ctx.globalCompositeOperation = 'lighter';
 		ctx.clearRect(0 , 0, cvs_width, cvs_height);
