@@ -2,30 +2,33 @@ var FWA = FWA || {};
 FWA.socket = null;
 
 $(function(){
-	
 	var cvs = $("#main-canvas")[0];
 	var ctx = cvs.getContext('2d');
 	var cvs_width = cvs.width;
 	var cvs_height = cvs.height;
-	
-
 	var dots = [];
-	var lastDotId = 0;
+	var is_serverAvailable = false;
 
 	function init() {
+		is_serverAvailable = (FWA.socket && io);
 		
-		FWA.socket = io.connect('http://cowboy:7331');
-		FWA.socket.on('connect', function() 
-		{
-			console.log("connected!");
-		});
+		if(is_serverAvailable) {
+			FWA.socket = io.connect('http://cowboy:7331');
+			FWA.socket.on('connect', function() 
+			{
+				console.log("connected!");
+			});
+			
+			FWA.socket.on('data', function(data) 
+			{
+				addDot(data.x, data.y)
+			});
+		}
 		
-		FWA.socket.on('data', function(data) 
-		{
-			addDot(data.x, data.y)
-		});
-		
+		ctx.globalCompositeOperation = 'lighter';
 		$(cvs).click(onCanvasClick);
+		
+		// start draw loop
 		setInterval(draw, 33);
 	}
 	function onCanvasClick(e) {
@@ -39,30 +42,30 @@ $(function(){
 		var localY   = mouseY - top;
 
 		addDot(localX, localY)
+		sendInfo(localX, localY)
 	}
 	function draw() {
-		ctx.globalCompositeOperation = 'lighter';
+		// clear frame
 		ctx.clearRect(0 , 0, cvs_width, cvs_height);
 
+		// draw dots
 		var len = dots.length;
 		for(var i=0; i < len; i++) {
 			var dot = dots[i];
 			dot.draw();
 		}
+		// trash old dots
 		while(dots.length > 100) {
 			dots.shift();
 		}
 	}
 	function addDot(x, y) {
-		dots.push(create_dot(lastDotId, x, y, removeDot));
-		lastDotId ++;
-
-		sendInfo(x, y)
+		dots.push(create_dot(x, y));
 	}
 	function removeDot(id) {
 		dots.splice(id, 1);
 	}
-	function create_dot(id, x, y, onDeath) {
+	function create_dot(x, y) {
 		var radius = 0;
 		var rMax = Math.floor(Math.random()*100) + 50;
 		var rSpeed = 2;
@@ -83,7 +86,6 @@ $(function(){
 			}else{
 				return;
 			}
-
 			if(radius >= rMax){
 				kill();
 			}
@@ -91,15 +93,11 @@ $(function(){
 		function kill() {
 			alive = false;
 		}
-		function get_alive(){
-			return alive;
-		}
-
-		return {id:id, draw:draw};
+		// return public members
+		return {draw:draw};
 	}
 	function sendInfo(x, y) {
-		
-		FWA.socket.emit('action', { "x": x, "y": y });
+		if(is_serverAvailable)FWA.socket.emit('action', { "x": x, "y": y });
 	}
 	function receiveInfo(response) {
 		var x = response.x;
