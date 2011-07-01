@@ -43,11 +43,10 @@ void loop()
       incomingByte = constrain(incomingByte , 0, 255);
       newLength = map(incomingByte, 0,255, 0,3);  
       newLength = length[newLength];
-      newLength = 300;
     }
     //we've got note and length, now check the note buffer
     checkTheNoteBuffer(newnote, newLength);
-
+ 
   }
   /*else
   {
@@ -79,6 +78,10 @@ void checkTheNoteBuffer( int note, int length)
     // if the current time is greater than the notes shutoff time, we can use the next note.
     if ( currentMillis > allShutoffs[i])
     {
+      Serial.print("new note: ");
+      Serial.println(note, DEC);
+      Serial.print("new length: ");
+      Serial.println(length, DEC);
       // turn off the old note
       MIDI.sendNoteOff(allNotes[i],0,1); 
       // set the value in the note buffer
@@ -95,6 +98,7 @@ void checkTheNoteBuffer( int note, int length)
         if (currentLEDMode == LOW) currentLEDMode = HIGH;
       }
       displayState = 1;
+      break;
     }
   }
 
